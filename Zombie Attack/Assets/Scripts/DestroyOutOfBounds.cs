@@ -10,6 +10,7 @@ public class DestroyOutOfBounds : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if fireball go outside the bound of negative y-axis
         if (transform.position.y < lowerBound)
         {
             // Just deactivate it

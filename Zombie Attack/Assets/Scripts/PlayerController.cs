@@ -26,48 +26,52 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerAnim = GetComponent<Animator>();
-        playerRb = GetComponent<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
-        canvasUI = GameObject.Find("Canvas").GetComponent<MainMenuUI>();
+        playerAnim = GetComponent<Animator>(); //get player animator component reference
+        playerRb = GetComponent<Rigidbody>();   //get the player rigidbody component reference
+        audioSource = GetComponent<AudioSource>();  //get the player audiosour component reference
+        canvasUI = GameObject.Find("Canvas").GetComponent<MainMenuUI>(); //CanvasUI referece by Canvas gameobject in hierarchy
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoveForward();
-        Rotation();
-        AimFireBall();
-        BoundPosition();
+        MoveForward(); //player move forward function
+        Rotation();     // player rotation function
+        AimFireBall();  // player aim and fire function
+        BoundPosition(); //bound the player in fix position
     }
 
     void MoveForward()
     {
+        //check if uparrow key is pressed and game is not over
         if (Input.GetKey(KeyCode.UpArrow) && !isGameOver)
         {
             //translate the player forward
             transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed);
-            playerAnim.SetBool("Walk", true);
+
+            playerAnim.SetBool("Walk", true);   //set walk animation true on key pressed
         }
         else
         {
-            playerAnim.SetBool("Walk", false);
+            playerAnim.SetBool("Walk", false); // if key is not pressed, set idle animation
         }
     }
 
     void Rotation()
     {
-        hrInput = Input.GetAxis("Horizontal");
+        hrInput = Input.GetAxis("Horizontal"); //taking input from left right arrow keys
         transform.Rotate(Vector3.up * hrInput * Time.deltaTime * rotationSpeed);
     }
 
     void AimFireBall()
     {
+        //check if mouse left button is pressed and game is not over
         if (Input.GetMouseButtonDown(0) && !isGameOver)
         {
             //start Gunplay animation on mouse left click
             playerAnim.SetBool("Gunplay", true);
-            audioSource.PlayOneShot(fireSound, 1f);
+
+            audioSource.PlayOneShot(fireSound, 1f);        //playe shot sound on fired
 
             //aim the projectile to enemy
             SpawnFireBall();
@@ -109,6 +113,7 @@ public class PlayerController : MonoBehaviour
         float zBound = -59f;
         if(transform.position.z < zBound)
         {
+            //if the player goes out the z-axis, bound the player in new position
             transform.position = new Vector3(transform.position.x, transform.position.y, zBound);
         }
     }
@@ -116,36 +121,37 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //check if player trigger with enemy
         if (other.gameObject.CompareTag("Enemy"))
         {
-            playerAnim.SetBool("Death", true);
-            isGameOver = true;
-            StartCoroutine(GameOver());
+            playerAnim.SetBool("Death", true);      //play death animation on trigger
+            isGameOver = true;                      //Game will be over
+            StartCoroutine(GameOver());             //Game over text will appear after 1 sec
         }
-        else if (other.gameObject.CompareTag("Fline"))
+        else if (other.gameObject.CompareTag("Fline")) //if player trigger with finish line
         {
-            playerAnim.SetBool("Victory", true);
-            StartCoroutine(LevelComplete());
-            audioSource.PlayOneShot(roarSound, 1f);
+            playerAnim.SetBool("Victory", true);        //play the victory animation
+            StartCoroutine(LevelComplete());            // Level completed text will show after 1 sec
+            audioSource.PlayOneShot(roarSound, 1f);     //play the roar sound after trigger
         }
     }
     IEnumerator LevelComplete()
     {
-        yield return new WaitForSeconds(0.5f);
-        isGameOver = true;
-        canvasUI.levelCompleted.gameObject.SetActive(true);
-        canvasUI.restartButton.gameObject.SetActive(true);
-        canvasUI.pauseButton.gameObject.SetActive(false);
-        winParticle1.Play();
+        yield return new WaitForSeconds(0.5f);                  //wait for 0.5 sec
+        isGameOver = true;                                      //game will be over
+        canvasUI.levelCompleted.gameObject.SetActive(true);     //level complete text will be activated
+        canvasUI.restartButton.gameObject.SetActive(true);      //restart button will be activated
+        canvasUI.pauseButton.gameObject.SetActive(false);       //pause button will be deactivated
+        winParticle1.Play();                                    //win particles will play
         winParticle2.Play();
     }
 
     IEnumerator GameOver()
     {
         yield return new WaitForSeconds(1f);
-        canvasUI.gameOver.gameObject.SetActive(true);
-        canvasUI.restartButton.gameObject.SetActive(true);
-        canvasUI.pauseButton.gameObject.SetActive(false);
+        canvasUI.gameOver.gameObject.SetActive(true);           //Gameover text will be activated
+        canvasUI.restartButton.gameObject.SetActive(true);      //restart button will be activated
+        canvasUI.pauseButton.gameObject.SetActive(false);       // Pause button will be deactivated
     }
 
 

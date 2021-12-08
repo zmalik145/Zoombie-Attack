@@ -9,8 +9,7 @@ public class ObjectPooler : MonoBehaviour
     [SerializeField] private GameObject objectToPool;
     [SerializeField] private int amountToPool;
 
-    // Start is called before the first frame update
-
+    
     void Awake()
     {
         ShareInstance = this;  // it means there will be only one instance of static class ObjectPooler and it can be used by only this class
@@ -20,10 +19,10 @@ public class ObjectPooler : MonoBehaviour
         pooledObjects = new List<GameObject>();
         for (int i = 0; i < amountToPool; i++)
         {
-            GameObject fireBall = Instantiate(objectToPool);
-            fireBall.SetActive(false);
-            pooledObjects.Add(fireBall);
-            fireBall.transform.SetParent(this.transform);
+            GameObject fireBall = Instantiate(objectToPool); //instantiate the object to pool
+            fireBall.SetActive(false);                         //then deactivate the object
+            pooledObjects.Add(fireBall);                        //add the object in pooled object list
+            fireBall.transform.SetParent(this.transform);        //set its tranform to its parent
         }
     }
 
@@ -31,9 +30,9 @@ public class ObjectPooler : MonoBehaviour
     {
         for (int i = 0; i < pooledObjects.Count; i++)
         {
-            if (!pooledObjects[i].activeInHierarchy)
+            if (!pooledObjects[i].activeInHierarchy) //check if pool is not activated in hierachy
             {
-                return pooledObjects[i];
+                return pooledObjects[i];            //return it
             }
 
         }
